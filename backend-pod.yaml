@@ -1,0 +1,24 @@
+# 1. API Version
+apiVersion: v1
+
+# 2. Kind
+kind: Pod
+
+# 3. Metadata
+metadata:
+  name: fintech-backend
+  labels:
+    app: fintech
+    component: backend
+    env: development
+
+# 4. Spec
+spec:
+  containers:
+  - name: nodejs-backend
+    # Pointing directly to the artifact built by your Jenkins CI pipeline
+    image: voncleph/fintech-app:latest
+    ports:
+    - containerPort: 5000
+    # Optional but good practice: Force Kubernetes to always pull the newest version of 'latest'
+    imagePullPolicy: Always
