@@ -1,0 +1,39 @@
+# 1. API Version for Deployments
+apiVersion: apps/v1
+
+# 2. Kind
+kind: Deployment
+
+# 3. Metadata for the Deployment object
+metadata:
+  name: fintech-backend-deployment
+  labels:
+    app: fintech
+    component: backend
+
+# 4. Spec (The Blueprint for High Availability)
+spec:
+  # Desired State: 2 identical running instances
+  replicas: 2
+  
+  # The Selector: How the Deployment tracks its owned Pods
+  selector:
+    matchLabels:
+      app: fintech
+      component: backend
+      
+  # The Template: The exact Pod specification to duplicate
+  template:
+    metadata:
+      labels:
+        app: fintech
+        component: backend
+        env: development
+    spec:
+      containers:
+      - name: nodejs-backend
+        # Pulling your custom image built via Jenkins
+        image: voncleph/fintech-app:latest
+        ports:
+        - containerPort: 5000
+        imagePullPolicy: Always
