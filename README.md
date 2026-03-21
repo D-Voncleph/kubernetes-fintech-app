@@ -48,3 +48,39 @@ Verify the API Server is responding and the node is ready:
 ```bash
 kubectl get nodes
 ```
+## 🚀 Kubernetes Deployment
+
+This application utilizes a decoupled, multi-tier architecture orchestrated by Kubernetes. The frontend and backend are managed as separate Deployments, allowing them to be scaled and updated independently.
+
+### Prerequisites
+* A running Kubernetes cluster (e.g., Minikube or Docker Desktop).
+* `kubectl` CLI installed and configured.
+
+### Deploying the Application
+
+To spin up the entire application stack, apply both declarative manifests to your cluster:
+
+1. **Deploy the Backend API:**
+   This provisions the Node.js backend using the custom Docker image.
+```bash
+   kubectl apply -f backend-deployment.yaml
+```
+
+2. **Deploy the Frontend Web Server:**
+   This provisions the Nginx web server.
+```bash
+   kubectl apply -f frontend-deployment.yaml
+```
+
+3. **Verify the Deployment:**
+   Ensure both Deployments and their respective Pods are running successfully:
+```bash
+   kubectl get deployments
+   kubectl get pods
+```
+
+---
+
+### 🚀 Step 2: Push Your Code and Docs
+
+Now, let's get that new `frontend-deployment.yaml` and your updated `README.md` safely stored in version control.
