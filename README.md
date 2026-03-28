@@ -84,3 +84,39 @@ To spin up the entire application stack, apply both declarative manifests to you
 ### 🚀 Step 2: Push Your Code and Docs
 
 Now, let's get that new `frontend-deployment.yaml` and your updated `README.md` safely stored in version control.
+
+
+## 🌐 Network Architecture
+
+This application utilizes a decoupled, multi-tier Kubernetes network. External traffic is strictly controlled, and backend services are securely isolated from the public internet.
+
+### Traffic Flow Diagram
+
+\```text
+[Public Internet / Web Browser]
+           │
+           ▼  (External Traffic via Port 30000+)
+  ┌─────────────────────────────┐
+  │ Service: fintech-frontend   │  <-- Type: NodePort
+  └─────────────┬───────────────┘
+                │ (Internal Port 80)
+                ▼
+  ┌─────────────────────────────┐
+  │ Pods: Nginx Web Servers     │  <-- Presentation Tier
+  └─────────────┬───────────────┘
+                │ (Internal HTTP Requests)
+                ▼
+  ┌─────────────────────────────┐
+  │ Service: fintech-backend    │  <-- Type: ClusterIP (Internal DNS)
+  └─────────────┬───────────────┘
+                │ (Internal Port 5000)
+                ▼
+  ┌─────────────────────────────┐
+  │ Pods: Node.js API           │  <-- Data / Logic Tier
+  └─────────────────────────────┘
+\```
+
+### Network Components
+
+1. **Frontend Service (NodePort):** Acts as the public entry point. It opens a physical port on the cluster's worker nodes, routing external internet traffic down to the Nginx pods.
+2. **Backend Service (ClusterIP):** Acts as an internal load balancer and static DNS record (`http://fintech-backend`). It completely walls off the Node.js API from the outside world, ensuring the backend can only be accessed by other authorized pods within the cluster.
