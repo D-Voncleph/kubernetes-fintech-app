@@ -1,0 +1,17 @@
+# frontend-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: fintech-frontend
+  labels:
+    app: fintech
+    component: frontend
+spec:
+  # Opening this up to external traffic
+  type: NodePort
+  selector:
+    app: fintech
+    component: frontend
+  ports:
+  - port: 80
+    targetPort: 80
