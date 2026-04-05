@@ -25,8 +25,24 @@ spec:
         component: frontend
         env: development
     spec:
+      # 5. Define the Volumes for the Pod
+      volumes:
+      - name: nginx-config-volume
+        configMap:
+          name: frontend-file-config # The exact name of the ConfigMap from yesterday
+
       containers:
       - name: nginx-frontend
         image: nginx:latest
         ports:
         - containerPort: 80
+        env:
+        - name: BACKEND_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: frontend-env-config
+              key: BACKEND_HOST
+        # 6. Mount the Volume into the Container's File System
+        volumeMounts:
+        - name: nginx-config-volume
+          mountPath: /etc/nginx/conf.d # This is where Nginx looks for custom configs
