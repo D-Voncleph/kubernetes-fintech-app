@@ -2,6 +2,17 @@
 
 This repository contains the Kubernetes manifest files used to orchestrate, scale, and manage the FinTech application container.
 
+## ⚠️ SECURITY WARNING: Secret Management
+
+**DO NOT USE THIS PATTERN IN PRODUCTION.**
+
+The `backend-secret.yaml` manifest in this repository contains Base64 encoded database credentials. It has been committed to version control **strictly for educational and demonstration purposes** to illustrate the Kubernetes Secret injection lifecycle.
+
+In a true production environment (e.g., Upscale DV client architecture), raw Kubernetes Secrets should **never** be committed to Git. Production best practices dictate:
+1. Adding all `*-secret.yaml` files to `.gitignore`.
+2. Utilizing an encryption tool like Mozilla SOPS to encrypt the YAML file before committing.
+3. Completely bypassing native Secrets in favor of an external Secrets Manager (like HashiCorp Vault or AWS KMS) integrated with the cluster.
+
 ## 🏗️ Architecture Overview
 
 The local development and testing environment is built on a Linux-native architecture utilizing **Windows Subsystem for Linux (WSL2)** and **Docker Desktop**. This ensures parity with production Linux servers while maintaining local development speed.
