@@ -38,54 +38,38 @@ This application utilizes a decoupled, multi-tier network. The backend is secure
   └─────────────────────────────┘
 ```
 
+## Deployment Runbooks
+
+This architecture is platform-agnostic and can be deployed to both local and cloud-native Kubernetes environments.
+
+### Option A: Local Development (Minikube)
+
+1. Start the local cluster: `minikube start`
+2. Apply the manifests: `kubectl apply -f .`
+3. Access the application: `minikube service frontend-service`
+
+### Option B: Ephemeral Cloud / Production EKS
+
+For zero-cost testing, utilize an ephemeral sandbox (e.g., Killercoda), or authenticate to your AWS EKS cluster via `aws eks update-kubeconfig`.
+
+1. Clone this repository into the deployment terminal.
+
+2. Apply the configuration and security layers:
+
+   ```bash
+   kubectl apply -f frontend-configmap.yaml
+   kubectl apply -f backend-secret.yaml
+   ```
+
+3. Apply the application tiers:
+
+   ```bash
+   kubectl apply -f backend-deployment.yaml && kubectl apply -f backend-service.yaml
+   kubectl apply -f frontend-deployment.yaml && kubectl apply -f frontend-service.yaml
+   ```
+
+4. Verify deployment health: `kubectl get pods -o wide`
+
+> *Save the file.*
+
 ---
-
-## 🛠️ Deployment Guide (Minikube)
-
-Follow these steps to launch the entire stack on a local Minikube cluster.
-
-### Prerequisites
-
-- Minikube installed and running (`minikube start`)
-- `kubectl` installed and configured
-
-### Step 1: Initialize Configuration & Security
-
-Deploy the static data that the Pods rely on to boot successfully:
-
-```bash
-kubectl apply -f frontend-configmap.yaml
-kubectl apply -f backend-secret.yaml
-```
-
-### Step 2: Deploy the Data Tier (Backend)
-
-Deploy the Node.js API and abstract it behind an internal ClusterIP:
-
-```bash
-kubectl apply -f backend-deployment.yaml
-kubectl apply -f backend-service.yaml
-```
-
-### Step 3: Deploy the Presentation Tier (Frontend)
-
-Deploy the Nginx web servers and expose them externally:
-
-```bash
-kubectl apply -f frontend-deployment.yaml
-kubectl apply -f frontend-service.yaml
-```
-
-### Step 4: Verify and Access
-
-Confirm all resources are running:
-
-```bash
-kubectl get all
-```
-
-Establish a tunnel to view the application in your local browser:
-
-```bash
-minikube service fintech-frontend
-```
