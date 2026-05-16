@@ -70,6 +70,76 @@ For zero-cost testing, utilize an ephemeral sandbox (e.g., Killercoda), or authe
 
 4. Verify deployment health: `kubectl get pods -o wide`
 
-> *Save the file.*
 
+
+# Layer 7 Networking & Routing (Ingress)
+
+To ensure secure, cost-effective scaling, this architecture strictly avoids exposing individual microservices via Layer 4 Network Load Balancers. Instead, all external traffic is routed through a single Layer 7 Ingress Controller.
+
+## The Routing Manifest (`frontend-ingress.yaml`)
+
+This declarative rulebook acts as the cluster's traffic cop, dynamically routing incoming HTTP requests to the isolated internal services.
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fintech-ingress
+spec:
+  ingressClassName: nginx # Note: Change to 'alb' for AWS EKS deployments
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80
+```
+
+## Ingress Deployment Strategies
+
+This application is engineered for platform agnosticism and supports multiple Ingress controllers depending on the target environment.
+
+### Option A: Ephemeral Sandbox (NGINX Ingress Controller)
+
+For zero-cost validation in environments like Killercoda or bare-metal:
+
+1. Provision the platform-agnostic controller:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/baremetal/deploy.yaml
+```
+
+2. Apply the routing rulebook:
+
+```bash
+kubectl apply -f frontend-ingress.yaml
+```
+
+3. Retrieve the exposed NodePort to access the application:
+
+```bash
+kubectl get svc -n ingress-nginx ingress-nginx-controller
+```
+
+### Option B: Enterprise AWS EKS (Application Load Balancer)
+
+For production deployments requiring AWS native integration:
+
+1. Ensure the AWS Load Balancer Controller is provisioned via the cluster's Terraform state.
+2. Update the `ingressClassName` in the manifest to `alb`.
+3. Apply the routing rulebook:
+
+```bash
+kubectl apply -f frontend-ingress.yaml
+```
+
+4. Retrieve the AWS-generated public DNS address:
+
+```bash
+kubectl get ingress
+```
 ---
